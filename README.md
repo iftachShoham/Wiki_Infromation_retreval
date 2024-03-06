@@ -3,7 +3,7 @@
 This project was completed as part of a university Information Retrieval course, aiming to develop a search engine for retrieving relevant information from a corpus of Wikipedia articles. The data retrieval process involved creating an inverted index on Google Cloud Platform (GCP), indexing the body, title, and anchor text of the Wikipedia articles. The search functionality was implemented in Python using the Flask framework, leveraging the inverted index for result retrieval. To enhance the search engine's efficiency, we pre-computed certain values such as document lengths and stored them in dictionaries to avoid runtime calculations. Additionally, we employed the PageRank algorithm for result ranking and used techniques like stopword removal to enhance retrieval effectiveness.
 
 # About
-This is a final project for the cource *Information retrival*.
+This is a final project for the course *Information retrival*.
 We are 3 student from BGU who with the help of our professor *Nir Grinberg* created a search engine on the wikipedia in the language of english.
 This rep also contains all of the code to create it by urself with the use of GCP (look at instruction).
 
