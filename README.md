@@ -10,29 +10,26 @@ This rep also contains all of the code to create it by urself with the use of GC
 1. Installation of google cloud storage
 ```basch
 pip install -q google-cloud-storage==1.43.0
-```
-2. You will have to create uself a project on Goole Cloud console, and follow the *instruction* file under Index creations.
-  
-3. Python 3.6 or later
+```  
+2. Python 3.6 or later
  ```basch
 py -m pip install [Package_to_install]
 ```
-4. Flask
+* Flask
+* NLTK
+* gzip
+* csv
+* numpy
+* pandas
 
-5. NLTK
+# Do It yourself
+If you wish to create it by usrself follow the following steps:
 
-6. gzip
-
-7. csv
-
-8. numpy
- ```basch
-pip install numpy
-```
-9. pandas
- ```basch
-pip install pandas
-```
+1. Follow the *instruction* file, and create urself a Google Cloud Console.
+   
+2. Use the code to create urself all of the indexes.
+   
+3.  run the front_end and queriy urself!
 
 # Usage
 * Run the command python3 search_frontend.py to start the application
