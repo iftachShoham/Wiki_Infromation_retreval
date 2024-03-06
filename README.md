@@ -23,7 +23,7 @@ py -m pip install [Package_to_install]
 * numpy
 * pandas
 
-# Do It yourself
+# DIY (Do It yourself)
 If you wish to create it by usrself follow the following steps:
 
 1. Follow the *instruction* file, and create urself a Google Cloud Console.
@@ -31,6 +31,8 @@ If you wish to create it by usrself follow the following steps:
 2. Use the code to create urself all of the indexes.
    
 3.  run the front_end and queriy urself!
+
+**Tip:** Use the test to test each of your index in order to be sure it works!
 
 # Usage
 * Run the command python3 search_frontend.py to start the application
