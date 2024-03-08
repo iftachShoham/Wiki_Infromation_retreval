@@ -5,3 +5,6 @@ To make sure that it works when you build your own indexing, test this and modif
 
 ## test_for_tf_idf
 Lets you test the tf_idf method, you can modify as you wish to test difrent normalization methods.
+
+## 50 question
+list of 50 question used to value the run time
