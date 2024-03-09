@@ -253,7 +253,7 @@ class BackEnd():
     with Page rank.
     """
     for k in tf_idf_dict.keys():
-      tf_idf_dict[k] += math.log2(factor_value_pr * self.page_rank_dict.get(k, 0))
+      tf_idf_dict[k] += math.log2(factor_value_pr * self.page_rank_dict.get(k, 1))
 
 
 
