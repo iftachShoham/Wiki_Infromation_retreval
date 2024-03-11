@@ -35,9 +35,10 @@ def search():
       return jsonify(res)
     # BEGIN SOLUTION
 
+    # Sends the request to the back end to handle.
     res = be.question_wiki(query, use_title=True,
                            use_page_rank=True,
-                           TITLE_VALUE_FACTORING=8,
+                           TITLE_VALUE_FACTORING=10.5,
                            PAGE_RANK_FACTORING=0.01,
                            use_multy_thread=True)
 
