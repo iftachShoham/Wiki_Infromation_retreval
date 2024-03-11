@@ -165,6 +165,11 @@ class BackEnd():
     return data
 
   def bm25(self, query, tf_idf_dict):
+    """
+    BM25 algorythem for search engien
+    query is the query you want to search on the engine.
+    tf_idf_dict is the dict in which you want to enter the data into.
+    """
     # create an empty Counter object to store document scores
     candidates = Counter()
 
@@ -195,32 +200,6 @@ class BackEnd():
           # add the bm25 score to the document's score in the candidates Counter
           candidates[doc_id] += bm25_score
     tf_idf_dict.update(candidates)
-
-  # def tf_idf(self, query, tf_idf_dict):
-  #   """
-  #   args:
-  #   query - stemmed and trimmed list of the words that were searched.
-  #   tf_idf_dict- counter
-  #
-  #   returns a counter:
-  #     key = doc_id
-  #     value = W (int) calculated by the tf-idf
-  #     with the words asked.
-  #   """
-  #
-  #   for word in query:
-  #       # Only handle words that are in the dictionary.
-  #       if word in self.text_InvertedIndex.df:
-  #           term_df = self.text_InvertedIndex.df[word]
-  #           pl = self.text_InvertedIndex.read_a_posting_list(self.base_dir_inverted, word, self.bucket_name_text)
-  #           # Map it to get -> [(doc_id,W)....]
-  #           pl_map = map(lambda x: (x[0],
-  #                       (x[1]/self.doc_length_dict.get(x[0],1))*(math.log2(self.N/term_df))), pl)
-  #
-  #           # Update tf_idf_dict with the new values, summing if the key already exists
-  #           tf_idf_dict.update(dict(pl_map))
-  #
-  #   return tf_idf_dict
 
   def tf_idf(self, query, tf_idf_dict):
     """
@@ -331,15 +310,9 @@ class BackEnd():
     Going through the entire process, given a string of the question asked,
     it will return the 100 most fitted wiki_id_pages and its title.
     """
-    # Checking special condition
-    # if '"' in query:
-    #   return self.question_wiki_with_par(query,use_title=use_title,use_page_rank=use_page_rank,TITLE_VALUE_FACTORING=TITLE_VALUE_FACTORING,PAGE_RANK_FACTORING=PAGE_RANK_FACTORING)
 
-    # Using llm to improve the query
-
+    # Step 1: improve query using LLM.
     llm_q = LLMImprove.improve_query(query)
-    # # Step 1: correct typos.
-    # query = self.correct_typos(query)
     original_q = self.filter_query_title(llm_q)
 
     if "when" in query or "When" in query:
@@ -349,21 +322,6 @@ class BackEnd():
       query = llm_q
 
 
-    # flag_for_question = True
-    # for word in original_q:
-    #   if word in self.question_words:
-    #     PAGE_RANK_FACTORING = PAGE_RANK_FACTORING * 250
-    #     flag_for_question = False
-    #     break
-
-    # # Use regular expression to find individual words within double quotes
-    # words_within_quotes = re.findall(r'"([^"]*)"', query)
-    # # Join the words into a sentence
-    # sentence_within_quotes = ' '.join(words_within_quotes)
-    # # query = self.correct_typos(query)
-    # list_of_words_within_quotes = self.filter_query_with_stemming(sentence_within_quotes)
-
-
     # Step 2: filter and stem and if the query length is less than 3, so also add the unstemmed words.
     if len(query) < 3:
         query = self.filter_query_without_stemming(query) + self.filter_query_with_stemming(query)
@@ -371,10 +329,7 @@ class BackEnd():
     else:
         query = self.filter_query_with_stemming(query)
 
-    # step 3: check if their question words in the query
-
-
-    # Step 4: tf_idf on the body
+    # Step 3: tf_idf on the body
     # Now its multy threaded.
     threads = []
     tf_idf_dict = ThreadSafeCounter()
@@ -439,67 +394,6 @@ class BackEnd():
 
     return top_100_keys
 
-  # def question_wiki_with_par(self, query, use_title=True,use_page_rank=True,TITLE_VALUE_FACTORING=1,PAGE_RANK_FACTORING=1,use_multy_thread=True):
-  #   # Getting the words insied the ""
-  #   pattern = r'"(.*?)"'
-  #   query = re.findall(pattern, query)
-
-  #   query = LLMImprove.improve_query(" ".join(query))
-
-  #   # Steming
-  #   query = self.filter_query_with_stemming(query)
-
-  #   similarities = defaultdict(int)
-  #   # Putting back the query to sentence and create a counter of the query terms
-  #   counter_query = Counter(query)
-  #   flag_first = True
-
-  #   for word in query:
-  #     if word in self.text_InvertedIndex.df:
-  #       term_df = self.text_InvertedIndex.df[word]
-  #       # Calculate the inverse document frequency (IDF) for the term
-  #       idf = math.log2(self.N / term_df)
-  #       # Read the posting list for the term
-  #       pl = self.text_InvertedIndex.read_a_posting_list(self.base_dir_inverted, word, self.bucket_name_text)
-  #       for doc_id, freq in pl:
-  #         # Making sure the words already exist
-  #         if doc_id not in similarities or flag_first:
-  #           tf = freq / self.doc_length_dict.get(doc_id, 2000)
-  #           weight = tf * idf
-  #           # Add the weighted term to the document's similarity score
-  #           similarities[doc_id] += weight * counter_query[word]
-
-  #       flag_first = False
-  #   # Normalize the similarity score by the query and document lengths
-  #   normalization_query = 0
-  #   sum_q = 0
-
-  #   # Calculate the length of the query vector
-  #   for term, freq in counter_query.items():
-  #     sum_q += freq * freq
-  #   normalization_query = 1 / math.sqrt(sum_q)
-
-  #   # For each document, normalize the similarity score by the document length and the query length
-  #   for doc_id in similarities.keys():
-  #     nf = 1 / math.sqrt(self.doc_length_dict.get(doc_id, 2000))
-  #     similarities[doc_id] *= normalization_query * nf
-
-
-  #   if use_page_rank:
-  #     self.page_rank_refactoring(similarities, PAGE_RANK_FACTORING)
-
-  #   # Convert the Counter to a list of tuples and sort it by value in descending order
-  #   sorted_counter = sorted(similarities.items(), key=lambda x: x[1], reverse=True)
-  #   # Get the top 100 items
-  #   top_100_keys = [
-  #     (str(doc_id), self.title_id[doc_id])
-  #     for doc_id, value in sorted_counter[:min(100, len(sorted_counter))]
-  #     if doc_id in self.title_id
-  #   ]
-  #   return top_100_keys
-
-
-
   def get_posting_list_body(self, word):
     """
     return the posting list of a word by the text index
@@ -521,7 +415,8 @@ class BackEnd():
   def get_doc_length(self, doc_id):
     # Returns the doc_length by the doc id.
     return self.doc_length_dict.get(doc_id,1)
-
+      
+# This calss is a thread safe counter for the algorythem multy threaded arc.
 class ThreadSafeCounter(Counter):
   def __init__(self):
     super().__init__()
@@ -530,7 +425,6 @@ class ThreadSafeCounter(Counter):
   def __setitem__(self, key, value):
     with self.lock:
       super().__setitem__(key, value)
-
 
 
 
